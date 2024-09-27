@@ -13,10 +13,36 @@
     <div class="col" style="padding-top: 34px; padding-left:40px">
     <div id="main">
     <script>
+// Function to prompt for the email, generate timestamp, and token
+async function generateForm() {
+// Prompt user for email
+const email = prompt("Please enter your email:", "jondoe@example.com");
+if (!email) {
+    alert("Email is required.");   
+    return;
+    }
+
+// Get the current Unix timestamp
+const timestamp = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
+    
+// Static key
+const key = "e4e2f04b5716148a48c1f4577c";
+    
+// Create the SSO token string
+const tokenData = `USER=${email}&TS=${timestamp}&KEY=${key}`;
+    
+// Create the SHA-256 hash
+const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(tokenData));
+const hashArray = Array.from(new Uint8Array(hashBuffer));
+const token = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+// Construct the final URL
+const url = `https://webhooksportal.com/sqsso?Email=${email}&TS=${timestamp}&SSOToken=${token}`;
+
 var formElements = []; // Represents all the elements a form will have
 var form = document.createElement('form');
 form.setAttribute('method', 'post');
-form.setAttribute('action', 'https://webhooksportal.learnupon.com/sqsso.json');
+form.setAttribute('action', url);
 form.setAttribute('target', 'luEmbedIframe'); // You'll need a target so iFrame knows what to use
 form.setAttribute('id', 'luEmbedForm')
 
