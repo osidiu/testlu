@@ -37,7 +37,7 @@ const hashArray = Array.from(new Uint8Array(hashBuffer));
 const token = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
 // Construct the final URL
-const url = `https://webhooksportal.com/sqsso?Email=${email}&TS=${timestamp}&SSOToken=${token}`;
+const url = `https://webhooksportal.learnupon.com/sqsso?Email=${email}&TS=${timestamp}&SSOToken=${token}`;
 
             // Create the form and iframe
             var form = document.createElement('form');
