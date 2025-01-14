@@ -1,71 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anywhere test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Iframe</title>
 </head>
 <body>
-    <h1>Check out anywhere</h1>
-    <p>Take courses and such</p>
-    <div class="row" style="display: none;" id="luEmbedFormDiv"></div>
-    <div class="row">
-    <div class="col" style="padding-top: 34px; padding-left:40px">
-    <div id="main">
-    <script>
-// Function to prompt for the email, generate timestamp, and token
-async function generateForm() {
-// Prompt user for email
-const email = prompt("Please enter your email:", "jondoe@example.com");
-if (!email) {
-    alert("Email is required.");   
-    return;
+  <h1>El Iframe magnifico</h1>
+  <p>Please enter your email address</p>
+  
+  <!-- Email Input -->
+  <input type="email" id="email" placeholder="Enter your email" required>
+  <button onclick="generateIframe()">Generate el URLo</button>
+
+  <!-- Display Generated URL -->
+  <p id="url-display" style="margin-top: 20px;"></p>
+
+  <!-- Iframe Container -->
+  <iframe id="iframe-container" width="100%" height="700" style="border: 1px solid #ccc;"></iframe>
+
+  <script>
+    // Function to generate the URL dynamically
+    function generateIframe() {
+      const email = document.getElementById('email').value;
+      if (!email) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      const key = "e4e2f04b5716148a48c1f4577c"; // Replace with your actual key
+      const timestamp = Math.floor(Date.now() / 1000); // Get current UNIX timestamp
+
+      // Create the string to hash
+      const stringToHash = `USER=${email}&TS=${timestamp}&KEY=${key}`;
+
+      // Generate the SHA-256 hash token
+      const hashBuffer = new TextEncoder().encode(stringToHash);
+      crypto.subtle.digest('SHA-256', hashBuffer).then((hash) => {
+        const token = Array.from(new Uint8Array(hash))
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+        
+        // Construct the final URL
+        const url = `https://webhooksportal.learnupon.com/sqsso?Email=${email}&TS=${timestamp}&SSOToken=${token}`;
+        document.getElementById('url-display').innerText = `Generated URL: ${url}`;
+        document.getElementById('iframe-container').src = url;
+      });
     }
-
-// Get the current Unix timestamp
-const timestamp = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
-    
-// Static key
-const key = "e4e2f04b5716148a48c1f4577c";
-    
-// Create the SSO token string
-const tokenData = `USER=${email}&TS=${timestamp}&KEY=${key}`;
-    
-// Create the SHA-256 hash
-const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(tokenData));
-const hashArray = Array.from(new Uint8Array(hashBuffer));
-const token = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-// Construct the final URL
-const url = `https://webhooksportal.learnupon.com/sqsso?Email=${email}&TS=${timestamp}&SSOToken=${token}`;
-
-        // Create the form and iframe
-            var form = document.createElement('form');
-            form.setAttribute('method', 'post');
-            form.setAttribute('action', url); // Dynamic URL with params
-            form.setAttribute('target', 'luEmbedIframe');
-            form.setAttribute('id', 'luEmbedForm');
-
-            // Append the form to the body (hidden)
-            document.body.appendChild(form);
-
-            // Create the iframe where the form will be submitted
-            var iframe = document.createElement('iframe');
-            iframe.setAttribute('name', 'luEmbedIframe');
-            iframe.style.display = 'none'; // Hide the iframe
-            document.body.appendChild(iframe);
-
-            // Submit the form
-            form.submit();
-        }
-
-        // Call the function to generate and submit the form
-        generateForm();
-
-    </script>
-</body>
-</html>
-
-    </script>
+  </script>
 </body>
 </html>
