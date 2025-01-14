@@ -42,7 +42,7 @@
           .join('');
         
         // Construct the final URL
-        const url = `https://webhooksportal.learnupon.com/sqsso?Email=${email}&TS=${timestamp}&SSOToken=${token}`;
+        const url = `https://webhooksportal.learnupon.com/sqsso?Email=${email}&TS=${timestamp}&SSOToken=${token}$redirect_uri=/catalog`;
         document.getElementById('url-display').innerText = `Generated URL: ${url}`;
         document.getElementById('iframe-container').src = url;
       });
